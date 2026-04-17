@@ -2,60 +2,153 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>BioLab - Simulation Stomates</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BioLab - Simulation Stomates (Version Mobile)</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.0/DragDropTouch.js"></script>
+
     <style>
-        body { margin: 0; background-color: #fdfae6; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { 
+            margin: 0; 
+            background-color: #fdfae6; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            touch-action: manipulation; /* Optimisation tactile */
+        }
+
         .section { display: none; width: 100%; text-align: center; }
         .section.active { display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 30px; border-radius: 25px; border: 3px solid #333; box-shadow: 0 8px 0px #e67e22; max-width: 450px; }
-        .btn-jaune { background-color: #ffd740; border: 2px solid #333; border-radius: 20px; padding: 12px 25px; font-weight: bold; cursor: pointer; margin: 10px; font-size: 1.1em; }
-        .badge { border: 2px solid #333; padding: 5px 15px; border-radius: 10px; display: inline-block; font-weight: bold; margin-bottom: 15px; }
-        .oculaire { width: 350px; height: 350px; border: 12px solid #222; border-radius: 50%; overflow: hidden; position: relative; background: black; margin: 15px auto; }
-        #image-stomate { position: absolute; top: 0; left: 0; height: 100%; cursor: grab; }
-        .reglages { background: #eee; padding: 15px; border-radius: 15px; border: 1px solid #ccc; }
+
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 25px; 
+            border: 3px solid #333; 
+            box-shadow: 0 8px 0px #e67e22; 
+            max-width: 90%; 
+            width: 450px;
+        }
+
+        .btn-jaune { 
+            background-color: #ffd740; 
+            border: 2px solid #333; 
+            border-radius: 20px; 
+            padding: 12px 25px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin: 10px; 
+            font-size: 1.1em;
+            transition: transform 0.1s;
+        }
+        .btn-jaune:active { transform: scale(0.95); }
+
+        .badge { 
+            border: 2px solid #333; 
+            padding: 5px 15px; 
+            border-radius: 10px; 
+            display: inline-block; 
+            font-weight: bold; 
+            margin-bottom: 15px;
+            background: #fff;
+        }
+
+        /* L'oculaire du microscope */
+        .oculaire { 
+            width: 280px; 
+            height: 280px; 
+            border: 10px solid #222; 
+            border-radius: 50%; 
+            overflow: hidden; 
+            position: relative; 
+            background: black; 
+            margin: 15px auto;
+            touch-action: none; /* Empêche le scroll quand on déplace l'image */
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        #image-stomate { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            height: 100%; 
+            cursor: grab;
+            transition: filter 0.2s ease;
+            user-drag: none;
+            -webkit-user-drag: none;
+        }
+
+        .reglages { 
+            background: #eee; 
+            padding: 15px; 
+            border-radius: 15px; 
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        input[type="range"] { width: 100%; margin: 10px 0; }
+
+        select {
+            padding: 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
 
     <div id="page-accueil" class="section active">
         <div class="card">
-            <h1>Bienvenue en labo !</h1>
-            <div class="badge">1bac sc. exp</div><br>
-            <button class="btn-jaune" onclick="navigation('page-menu')">Explorer !</button>
+            <h1>🔬 Bienvenue en labo !</h1>
+            <div class="badge">SVT - 1ère BAC Sc. Exp</div><br>
+            <button class="btn-jaune" onclick="navigation('page-menu')">Commencer la séance</button>
         </div>
     </div>
 
     <div id="page-menu" class="section">
         <div class="card">
-            <h2>Que voulez-vous faire ?</h2>
-            <button class="btn-jaune" onclick="lancerSimulation('test')">🔬 Test (Simulation)</button>
-            <button class="btn-jaune" onclick="lancerSimulation('activite')">🌿 Activité (Stomate 1)</button>
-            <button class="btn-jaune" onclick="navigation('page-quiz')">📝 Quiz</button>
-            <p><a href="#" onclick="navigation('page-accueil')">Retour Accueil</a></p>
+            <h2>Préparation microscopique</h2>
+            <button class="btn-jaune" onclick="lancerSimulation('test')">🔬 Échantillon Test</button>
+            <button class="btn-jaune" onclick="lancerSimulation('activite')">🌿 Observation Stomates</button>
+            <button class="btn-jaune" onclick="navigation('page-quiz')">📝 Quiz d'évaluation</button>
+            <p><a href="#" onclick="navigation('page-accueil')">Retour à l'accueil</a></p>
         </div>
     </div>
 
     <div id="page-labo" class="section">
-        <div class="card" style="max-width: 600px;">
-            <button onclick="navigation('page-menu')" style="cursor:pointer">⬅ Menu</button>
-            <div class="oculaire">
-                <img src="stomate.jpg" id="image-stomate">
+        <div class="card">
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+                <button onclick="navigation('page-menu')" style="cursor:pointer; border-radius: 10px; border: 1px solid #333; padding: 5px 10px;">⬅ Menu</button>
+                <span id="label-zoom" style="font-weight:bold;">x100</span>
             </div>
+
+            <div class="oculaire" id="zone-touch">
+                <img src="stomate.jpg" id="image-stomate" alt="Observation">
+            </div>
+
             <div class="reglages">
-                <label>Mise au point : </label>
+                <label>⚙️ Mise au point (Vis micrométrique) : </label>
                 <input type="range" id="focus" min="0" max="10" value="0">
+                
+                <label>🔍 Objectif : </label>
                 <select id="zoom">
-                    <option value="1">x100</option>
-                    <option value="2">x400</option>
-                    <option value="4">x1000</option> </select>
+                    <option value="1">Faible grossissement (x100)</option>
+                    <option value="2">Moyen grossissement (x400)</option>
+                    <option value="4">Fort grossissement (x1000)</option> 
+                </select>
             </div>
         </div>
     </div>
 
     <div id="page-quiz" class="section">
         <div class="card">
-            <h2>Quiz bientôt disponible !</h2>
-            <button class="btn-jaune" onclick="navigation('page-menu')">Retour</button>
+            <h2>📝 Évaluation</h2>
+            <p>Le module de quiz sera disponible après la manipulation du microscope.</p>
+            <button class="btn-jaune" onclick="navigation('page-menu')">Retour au menu</button>
         </div>
     </div>
 
@@ -63,54 +156,78 @@
         const img = document.getElementById('image-stomate');
         const foc = document.getElementById('focus');
         const zoo = document.getElementById('zoom');
+        const labelZoom = document.getElementById('label-zoom');
+        
         let drag = false, x = 0, y = 0, sx, sy;
 
+        // --- NAVIGATION ---
         function navigation(id) {
             const pages = document.querySelectorAll('.section');
             pages.forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
+        // --- SIMULATION ---
         function lancerSimulation(type) {
             x = 0; y = 0;
             if (type === 'test') {
-                img.src = 'stomate.jpg';
-                foc.value = 0; 
+                img.src = 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=500'; // Image test
+                foc.value = 5; 
                 zoo.value = 1; 
             } 
             else if (type === 'activite') {
-                img.src = 'stomate1.jpg';
-                foc.value = 10; // Très flou
-                zoo.value = 4;  // Très gros
+                img.src = 'stomate1.jpg'; // Ton image réelle
+                foc.value = 0; 
+                zoo.value = 2; 
             }
             updateVisuals();
             navigation('page-labo');
         }
 
         foc.oninput = updateVisuals;
-        zoo.onchange = updateVisuals;
+        zoo.onchange = function() {
+            labelZoom.innerText = "x" + (this.value * 100);
+            updateVisuals();
+        };
 
         function updateVisuals() {
+            // Logique de mise au point (le focus est parfait à la valeur 5)
             const blurVal = Math.abs(foc.value - 5);
             img.style.filter = `blur(${blurVal}px)`;
             img.style.transform = `translate(${x}px, ${y}px) scale(${zoo.value})`;
         }
 
-        img.onmousedown = (e) => { 
-            drag = true; 
-            sx = e.clientX - x; 
-            sy = e.clientY - y; 
-            e.preventDefault(); 
-        };
-        
-        window.onmouseup = () => drag = false;
-        
-        window.onmousemove = (e) => {
+        // --- GESTION DU DÉPLACEMENT (SOURIS + TACTILE) ---
+        function startDrag(e) {
+            drag = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            sx = clientX - x;
+            sy = clientY - y;
+            if (e.cancelable) e.preventDefault();
+        }
+
+        function endDrag() { drag = false; }
+
+        function moveDrag(e) {
             if (!drag) return;
-            x = e.clientX - sx; 
-            y = e.clientY - sy;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            x = clientX - sx;
+            y = clientY - sy;
             updateVisuals();
-        };
+        }
+
+        // Événements Souris
+        img.addEventListener('mousedown', startDrag);
+        window.addEventListener('mouseup', endDrag);
+        window.addEventListener('mousemove', moveDrag);
+
+        // Événements Tactiles
+        img.addEventListener('touchstart', startDrag, {passive: false});
+        window.addEventListener('touchend', endDrag);
+        window.addEventListener('touchmove', moveDrag, {passive: false});
+
     </script>
 </body>
 </html>
